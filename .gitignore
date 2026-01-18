@@ -1,0 +1,26 @@
+# Binários e Compilados do Go
+/bin/
+/dist/
+*.exe
+*.dll
+*.so
+*.dylib
+main
+
+# Dependências
+/vendor/
+
+# Arquivos de Sistema
+.DS_Store
+Thumbs.db
+
+# Docker (Não queremos versionar dados do banco local)
+.docker/
+dbdata/
+
+# Configurações de IDE
+.vscode/
+.idea/
+
+# Arquivos de Ambiente (Segurança!)
+.env

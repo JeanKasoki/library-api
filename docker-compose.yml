@@ -1,0 +1,25 @@
+services:
+  mysql:
+    container_name: go-mysql
+    image: mysql:9.0
+    ports:
+      - "3306:3306" # Expõe a porta 3306 do Docker para o seu Windows/Linux
+    environment:
+      - MYSQL_ROOT_PASSWORD=root # A senha do root
+      - MYSQL_DATABASE=library # Cria o banco 'library' automaticamente
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - go-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s 
+      retries: 3
+
+volumes:
+  dbdata:
+
+networks:
+  go-network:
+    driver: bridge
