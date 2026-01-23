@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"errors" // Pacote padrão para criar erros
+	"time"   // Para verificar ano atual
 	"github.com/JeanKasoki/library-api/internal/entity"
 	"github.com/JeanKasoki/library-api/internal/infra/repository"
 )
@@ -13,6 +15,7 @@ type BookInput struct{
 	AnoPublicacao int
 }
 
+// BookInput (DTO - Data Transfer Object)
 // Estrutura do caso de uso da criação de livro
 type CreateBookUseCase struct {
 	Repo *repository.BookRepository
@@ -23,6 +26,20 @@ func NewCreateBookUseCase(repo *repository.BookRepository) *CreateBookUseCase{
 }
 
 func (u *CreateBookUseCase) Execute(input *BookInput) error{
+	// --- AREA DE VALIDAÇÃO (Regras de Negócio) ---
+	if input.Titulo == ""{
+		return errors.New("o título do livro não pode estar vazio")
+	}
+
+  if len(input.ISBN) < 10 {
+		return errors.New("ISBN inválido: deve ter pelo menos 10 caracteres")
+	}
+
+	anoAtual := time.Now().Year()
+	if input.AnoPublicacao > anoAtual{
+		return errors.New("o ano de publicação não pode ser no futuro")
+	}
+	// --- FIM DA VALIDAÇÃO ---
 	newBook := entity.Book{
 		Titulo: input.Titulo,
 		Autor: input.Autor,
