@@ -25,7 +25,7 @@ func NewCreateBookUseCase(repo *repository.BookRepository) *CreateBookUseCase{
 	return &CreateBookUseCase{Repo: repo}
 }
 
-func (u *CreateBookUseCase) Execute(input *BookInput) error{
+func (usecase *CreateBookUseCase) ExecuteAsync(input *BookInput) error {
 	// --- AREA DE VALIDAÇÃO (Regras de Negócio) ---
 	if input.Titulo == ""{
 		return errors.New("o título do livro não pode estar vazio")
@@ -46,8 +46,8 @@ func (u *CreateBookUseCase) Execute(input *BookInput) error{
 		ISBN: input.ISBN,
 		AnoPublicacao: input.AnoPublicacao,
 	}
-		// O 'u' é o UseCase. Dentro dele tem o 'Repo'. Dentro do Repo tem o 'Create'.
+		// O 'usecase' é o UseCase. Dentro dele tem o 'Repo'. Dentro do Repo tem o 'Create'.
     // O Create espera um PONTEIRO de livro (&newBook).
-	err := u.Repo.Create(&newBook)
+	err := usecase.Repo.Create(&newBook)
 	return err
 }
