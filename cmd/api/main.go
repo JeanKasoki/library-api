@@ -1,22 +1,48 @@
 package main
 
-import(
-	"fmt"
+import (
+	"net/http"
+
 	"github.com/JeanKasoki/library-api/internal/entity"
 	"github.com/JeanKasoki/library-api/internal/infra/database"
+	"github.com/JeanKasoki/library-api/internal/infra/repository"
+	"github.com/JeanKasoki/library-api/internal/infra/web/handler"
+	"github.com/JeanKasoki/library-api/internal/usecase"
+	"github.com/rs/zerolog/log"
 )
 
 func main(){
 	// Capturamos a conexão (db) e o erro (err) para tentar conectar no banco
 	db, err := database.ConnectDB()
 	if err != nil{
-		panic(err)
+		log.Fatal().Err(err).Msg("Erro ao conectar no banco")
 	}
-	fmt.Println("Conexão com o banco de dados realizada com sucesso.")
+	log.Info().Msg("Application have been successfully")
 	// Criação das auto migrations, passamos o db de cima capturado e passamos um PONTEIRO (&) de cada entidade vazia
 	err = db.AutoMigrate(&entity.Book{}, &entity.Loan{}, &entity.Notification{}, &entity.User{})
 	if err != nil{
-		panic("Falha em realizar a migração: " + err.Error())
+		log.Fatal().Err(err).Msg("Falha ao criar tabelas (AutoMigrate)")
 	}
-	fmt.Println("Tabelas criadas/atualizadas com sucesso.")
+	log.Info().Msg("Conexão e Tabelas OK")
+
+	// --- INJEÇÃO DE DEPENDÊNCIA (LIGANDO OS CABOS) ---
+
+	// Criamos o Repository e damos a chave do banco (db) pra ele
+	bookRepo := repository.NewBookRepository(db)
+	// Criamos o UseCase e apresentamos o repository (bookRepo) pra ele
+	bookUsecase := usecase.NewCreateBookUseCase(bookRepo)
+	// Criamos o Handler e apresentamos o bookUsecase pra ele
+	bookHandler := handler.NewBookHandler(bookUsecase)
+
+	// --- FIM DA INJEÇÃO ---
+
+	// Configuração da rota
+	// "Quando alguém chamar POST /books, passa a ligação para o Handler"
+	http.HandleFunc("POST /books", bookHandler.Create)
+
+	log.Info().Msg("Servidor rodando na porta 8080")
+
+	if err := http.ListenAndServe(":8080", nil); err != nil{
+		log.Error().Msg("Erro ao subir servidor HTTP")
+	}
 }
