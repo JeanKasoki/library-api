@@ -38,7 +38,7 @@ The project follows the **Standard Go Project Layout**:
 ```
 
 ### ⚡ Architecture Flow
-`Main (Injection)` -> `UseCase (Logic)` -> `Repository (Interface)` -> `Database (MySQL)`
+`Main (Injection) -> Handler (HTTP) -> UseCase (Logic) -> Repository (Interface) -> Database (MySQL)`
 
 ### 🛠️ How to Run (Development)
 **1. Start the Database:**
@@ -51,14 +51,19 @@ docker compose up -d
 go run cmd/api/main.go
 ```
 
+**3. Test the Endpoint (POST):**
+```bash
+curl -X POST http://localhost:8080/books -d '{"titulo": "The Go Programming Language", "autor": "Alan A. A. Donovan", "isbn": "978-0134190440", "ano_publicacao": 2015}'
+```
+
 ### 🚧 Status
 In development.
 
 ✅ Entities & Database Modeling
 ✅ Infrastructure (Docker + GORM Connection)
 ✅ Repository Pattern Implemented
-✅ Create Book UseCase (Business Logic)
-⏳ API Handlers (Web Layer) - Next Step
+✅ Feature: Create Book (POST /books) - Done
+⏳ Feature: List Books (GET /books) - Next Step
 
 ---
 
@@ -97,7 +102,7 @@ O projeto segue o **Standard Go Project Layout**:
 ```
 
 ### ⚡ Fluxo da Arquitetura
-`Main (Injeção) -> UseCase (Lógica) -> Repository (Interface) -> Database (MySQL)`
+`Main (Injeção) -> Handler (HTTP) -> UseCase (Lógica) -> Repository (Interface) -> Database (MySQL)`
 
 ### 🛠️ Como Rodar (Desenvolvimento)
 **1. Subir o Banco de Dados:**
@@ -110,11 +115,16 @@ docker compose up -d
 go run cmd/api/main.go
 ```
 
+**3. Testar a Rota (POST):**
+```bash
+curl -X POST http://localhost:8080/books -d '{"titulo": "The Go Programming Language", "autor": "Alan A. A. Donovan", "isbn": "978-0134190440", "ano_publicacao": 2015}'
+```
+
 ### 🚧 Status
 Em desenvolvimento.
 
 ✅ Entidades e Modelagem de Banco
 ✅ Infraestrutura (Docker + Conexão GORM)
 ✅ Padrão Repository Implementado
-✅ UseCase de Criação de Livros (Lógica de Negócio)
-⏳ API Handlers (Camada Web) - Próximo Passo
+✅ Feature: Criar Livro (POST /books) - Feito
+⏳ Feature: Listar Livros (GET /books) - Próximo Passo
