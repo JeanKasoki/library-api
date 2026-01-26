@@ -16,6 +16,17 @@ func NewBookRepository(db *gorm.DB) *BookRepository {
 }
 
 // Create recebe um Livro (da pasta entity) e salva no banco
-func (r *BookRepository) Create(book *entity.Book) error {
-		return r.DB.Create(book).Error
+func (repo *BookRepository) Create(book *entity.Book) error {
+		return repo.DB.Create(book).Error
+}
+// FindAll busca todos os registros de livros na tabela.
+func (repo *BookRepository) FindAll() ([]entity.Book, error) {
+	var books []entity.Book
+
+	// O método .Find() gera o SQL "SELECT * FROM books".
+	err := repo.DB.Find(&books).Error
+	if err != nil {
+		return nil, err
+	}
+	return books, nil
 }
