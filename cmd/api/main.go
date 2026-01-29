@@ -26,19 +26,23 @@ func main(){
 	log.Info().Msg("Conexão e Tabelas OK")
 
 	// --- INJEÇÃO DE DEPENDÊNCIA (LIGANDO OS CABOS) ---
-
+ //  --- CREATE --- 
 	// Criamos o Repository e damos a chave do banco (db) pra ele
 	bookRepo := repository.NewBookRepository(db)
 	// Criamos o UseCase e apresentamos o repository (bookRepo) pra ele
-	bookUsecase := usecase.NewCreateBookUseCase(bookRepo)
-	// Criamos o Handler e apresentamos o bookUsecase pra ele
-	bookHandler := handler.NewBookHandler(bookUsecase)
+	createBookUseCase := usecase.NewCreateBookUseCase(bookRepo)
+	// Listamos o UseCase e apresentamos o repository (bookRepo) pra ele
+	listBooksUseCase := usecase.NewListBooksUseCase(bookRepo)
+	// Criamos o Handler e apresentamos o createBookUseCase e o listBooksUseCase pra ele
+	bookHandler := handler.NewBookHandler(createBookUseCase, listBooksUseCase)
+
 
 	// --- FIM DA INJEÇÃO ---
 
 	// Configuração da rota
 	// "Quando alguém chamar POST /books, passa a ligação para o Handler"
 	http.HandleFunc("POST /books", bookHandler.Create)
+	http.HandleFunc("GET /books", bookHandler.List)
 
 	log.Info().Msg("Servidor rodando na porta 8080")
 
