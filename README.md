@@ -20,7 +20,9 @@ API for library management developed in Go (Golang), focusing on Clean Architect
   - Database connection using GORM driver.
   - **Auto Migrations:** Tables are automatically created/updated based on Go structs.
   - **Repository Pattern:** Isolated database operations (`BookRepository`).
-- **Application Layer (Use Cases):** - `CreateBookUseCase`: Business logic for creating books, decoupled from the database and HTTP layers using DTOs (Data Transfer Objects).
+**Web Handler:** HTTP Handlers managing Requests/Responses (`BookHandler`).
+- **Application Layer (Use Cases):** - `CreateBookUseCase`: Business logic for creating books, decoupled using DTOs.
+  - `ListBooksUseCase`: Logic for retrieving all books and mapping Entities to Output DTOs.
 
 ### 📂 Project Structure
 The project follows the **Standard Go Project Layout**:
@@ -33,6 +35,8 @@ The project follows the **Standard Go Project Layout**:
 │   └── infra/
 │       ├── database/        # DB Connection
 │       └── repository/      # Data Access Layer (Implements GORM)
+│       └── web/
+│           └── handler/     # HTTP Handlers (Controllers)
 ├── docker-compose.yml       # Infrastructure as Code
 └── go.mod                   # Dependency Manager
 ```
@@ -55,7 +59,10 @@ go run cmd/api/main.go
 ```bash
 curl -X POST http://localhost:8080/books -d '{"titulo": "The Go Programming Language", "autor": "Alan A. A. Donovan", "isbn": "978-0134190440", "ano_publicacao": 2015}'
 ```
-
+**4. Test: List Books (GET): Open in browser or run:**
+```bash
+curl http://localhost:8080/books
+```
 ### 🚧 Status
 In development.
 
@@ -63,7 +70,8 @@ In development.
 ✅ Infrastructure (Docker + GORM Connection)
 ✅ Repository Pattern Implemented
 ✅ Feature: Create Book (POST /books) - Done
-⏳ Feature: List Books (GET /books) - Next Step
+✅ Feature: List Books (GET /books) - Done
+⏳ Feature: Find Book By ID (GET /books?id=x) - Next Step
 
 ---
 
@@ -83,7 +91,9 @@ API para gerenciamento de biblioteca desenvolvida em Go (Golang), focando em Cle
   - Conexão com banco de dados usando driver GORM.
   - **Auto Migrations:** Tabelas são criadas/atualizadas automaticamente baseadas nas structs do Go.
   - **Repository Pattern:** Operações de banco de dados isoladas (`BookRepository`).
+  - **Web Handler:** Handlers HTTP gerenciando Requisições/Respostas (`BookHandler`).
 - **Camada de Aplicação (Use Cases):** - `CreateBookUseCase`: Lógica de negócio para criação de livros, desacoplada do banco e da camada HTTP usando DTOs (Data Transfer Objects).
+- `ListBooksUseCase`: Lógica para recuperar todos os livros e mapear Entidades para DTOs de saída.
 
 ### 📂 Estrutura do Projeto
 O projeto segue o **Standard Go Project Layout**:
@@ -97,6 +107,8 @@ O projeto segue o **Standard Go Project Layout**:
 │   └── infra/
 │       ├── database/        # Conexão com Banco
 │       └── repository/      # Acesso a Dados (Implementação GORM)
+│       └── web/
+│           └── handler/     # Handlers HTTP (Controladores)
 ├── docker-compose.yml       # Infraestrutura como Código
 └── go.mod                   # Gerenciador de Dependências
 ```
@@ -120,6 +132,11 @@ go run cmd/api/main.go
 curl -X POST http://localhost:8080/books -d '{"titulo": "The Go Programming Language", "autor": "Alan A. A. Donovan", "isbn": "978-0134190440", "ano_publicacao": 2015}'
 ```
 
+**4. Testar: Listar Livros (GET): Abra no navegador ou rode:**
+```bash
+curl http://localhost:8080/books
+```
+
 ### 🚧 Status
 Em desenvolvimento.
 
@@ -127,4 +144,5 @@ Em desenvolvimento.
 ✅ Infraestrutura (Docker + Conexão GORM)
 ✅ Padrão Repository Implementado
 ✅ Feature: Criar Livro (POST /books) - Feito
-⏳ Feature: Listar Livros (GET /books) - Próximo Passo
+✅ Feature: Listar Livros (GET /books) - Feito
+⏳ Feature: Buscar Livro por ID (GET /books?id=x) - Próximo Passo
