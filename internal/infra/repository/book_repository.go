@@ -30,3 +30,15 @@ func (repo *BookRepository) FindAll() ([]entity.Book, error) {
 	}
 	return books, nil
 }
+
+// FindByID busca um livro específico pelo ID
+func (repo *BookRepository) FindByID(id int) (entity.Book, error){
+	var book entity.Book
+
+	err := repo.DB.First(&book, id).Error
+	if err != nil{
+		// Não se pode retornar nil para uma struct comum. nil só serve para ponteiros, interfaces ou erros. Por isso retornamos uma struct vazia
+		return entity.Book{}, err
+	}
+	return book, nil
+}
