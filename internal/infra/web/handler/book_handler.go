@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"github.com/rs/zerolog/log"
 	"github.com/JeanKasoki/library-api/internal/usecase"
 )
@@ -11,12 +12,14 @@ import (
 type BookHandler struct {
 	CreateBookUseCase *usecase.CreateBookUseCase
 	ListBooksUseCase *usecase.ListBooksUseCase
+	GetBookUseCase *usecase.GetBookUseCase
 }
 
-func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUseCase) *BookHandler{
+func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUseCase, get *usecase.GetBookUseCase) *BookHandler{
 	return &BookHandler{
 		CreateBookUseCase: create,
 		ListBooksUseCase: list,
+		GetBookUseCase: book,
 	}
 }
 
@@ -54,7 +57,7 @@ func (h *BookHandler) Create(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (h *BookHandler) List (w http.ResponseWriter, req *http.Request){
+func (h *BookHandler) List(w http.ResponseWriter, req *http.Request){
 	// 1. Chamar o UseCase (h.ListBooksUseCase.Execute())
 	list, err := h.ListBooksUseCase.Execute()
     if err != nil {
@@ -73,4 +76,38 @@ func (h *BookHandler) List (w http.ResponseWriter, req *http.Request){
     // C: Converter a lista (Go) para JSON (Texto) e escrever na resposta (w)
 		// NewEncoder conecta com a saída (w). Encode pega o dado (list).
 		json.NewEncoder(w).Encode(list)
+}
+
+// Novo Método: GET /books/find?id=1
+func (h *BookHandler) GetBook(w http.ResponseWriter, req *http.Request) {
+	// 1. Pegar o ID da URL (Query Parameter)
+	// O req.URL.Query().Get("id") busca o valor de ?id=...
+	idString := req.URL.Query().Get("id")
+
+	// 2. Converter String para Int
+	// Atoi significa (Ascii to Integer). Retorna o numero e um erro.
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		// Se der erro (ex: id vazio ou "abc"), retornamos erro 400 (Bad Request)
+		log.Error().Msg("ID inválido ou não fornecido")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// 3. Chamar o UseCase passando o ID convertido
+	book, err := h.GetBookUseCase.Execute(id)
+	if err != nil {
+		// Aqui assumimos 500, mas idealmente seria 404 (Not Found) se não achar
+		log.Error().Err(err).Msg("Falha ao buscar livro")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// 4. Sucesso
+	log.Info().Msgf("Livro encontrado: %s", book.Titulo)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	
+	// Correção: Passando (w) para o Encoder
+	json.NewEncoder(w).Encode(book)
 }
