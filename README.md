@@ -22,7 +22,9 @@ API for library management developed in Go (Golang), focusing on Clean Architect
   - **Repository Pattern:** Isolated database operations (`BookRepository`).
 **Web Handler:** HTTP Handlers managing Requests/Responses (`BookHandler`).
 - **Application Layer (Use Cases):** - `CreateBookUseCase`: Business logic for creating books, decoupled using DTOs.
+  - `CreateBookUseCase`: Business logic for creating books, decoupled using DTOs.
   - `ListBooksUseCase`: Logic for retrieving all books and mapping Entities to Output DTOs.
+  - `GetBookUseCase`: Logic for retrieving a single book by ID.
 
 ### 📂 Project Structure
 The project follows the **Standard Go Project Layout**:
@@ -63,6 +65,12 @@ curl -X POST http://localhost:8080/books -d '{"titulo": "The Go Programming Lang
 ```bash
 curl http://localhost:8080/books
 ```
+
+**5. Test: Find Book By ID (GET): Open in browser or run:**
+```bash
+curl "http://localhost:8080/book?id=1"
+```
+
 ### 🚧 Status
 In development.
 
@@ -71,7 +79,8 @@ In development.
 ✅ Repository Pattern Implemented
 ✅ Feature: Create Book (POST /books) - Done
 ✅ Feature: List Books (GET /books) - Done
-⏳ Feature: Find Book By ID (GET /books?id=x) - Next Step
+✅ Feature: Find Book By ID (GET /book?id=x) - Done 
+⏳ Feature: Update Book (PUT /books) - Next Step
 
 ---
 
@@ -93,7 +102,9 @@ API para gerenciamento de biblioteca desenvolvida em Go (Golang), focando em Cle
   - **Repository Pattern:** Operações de banco de dados isoladas (`BookRepository`).
   - **Web Handler:** Handlers HTTP gerenciando Requisições/Respostas (`BookHandler`).
 - **Camada de Aplicação (Use Cases):** - `CreateBookUseCase`: Lógica de negócio para criação de livros, desacoplada do banco e da camada HTTP usando DTOs (Data Transfer Objects).
+- `CreateBookUseCase`: Lógica de negócio para criação de livros, desacoplada usando DTOs.
 - `ListBooksUseCase`: Lógica para recuperar todos os livros e mapear Entidades para DTOs de saída.
+- `GetBookUseCase`: Lógica para recuperar um único livro por ID.
 
 ### 📂 Estrutura do Projeto
 O projeto segue o **Standard Go Project Layout**:
@@ -137,6 +148,11 @@ curl -X POST http://localhost:8080/books -d '{"titulo": "The Go Programming Lang
 curl http://localhost:8080/books
 ```
 
+**5. Testar: Buscar Livro por ID (GET): Abra no navegador ou rode:**
+```bash
+curl "http://localhost:8080/book?id=1"
+```
+
 ### 🚧 Status
 Em desenvolvimento.
 
@@ -145,4 +161,5 @@ Em desenvolvimento.
 ✅ Padrão Repository Implementado
 ✅ Feature: Criar Livro (POST /books) - Feito
 ✅ Feature: Listar Livros (GET /books) - Feito
-⏳ Feature: Buscar Livro por ID (GET /books?id=x) - Próximo Passo
+✅ Feature: Buscar Livro por ID (GET /book?id=x) - Feito 
+⏳ Feature: Atualizar Livro (PUT /books) - Próximo Passo
