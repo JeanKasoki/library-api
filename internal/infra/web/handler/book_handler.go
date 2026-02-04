@@ -19,7 +19,7 @@ func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUs
 	return &BookHandler{
 		CreateBookUseCase: create,
 		ListBooksUseCase: list,
-		GetBookUseCase: book,
+		GetBookUseCase: get,
 	}
 }
 
