@@ -42,3 +42,14 @@ func (repo *BookRepository) FindByID(id int) (entity.Book, error){
 	}
 	return book, nil
 }
+
+// Update atualiza os dados de um livro no banco.
+func (repo *BookRepository) Update(book *entity.Book) (*entity.Book, error){
+	// 1. Usamos Save() porque ele lida com "Update se existir ID, Create se não existir"
+  // 2. Passamos 'book' direto, sem &, pois ele já é um ponteiro
+	err := repo.DB.Save(book).Error
+	if err != nil{
+		return nil, err
+	}
+	return book, nil
+}
