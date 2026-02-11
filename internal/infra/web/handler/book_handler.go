@@ -13,13 +13,15 @@ type BookHandler struct {
 	CreateBookUseCase *usecase.CreateBookUseCase
 	ListBooksUseCase *usecase.ListBooksUseCase
 	GetBookUseCase *usecase.GetBookUseCase
+	UpdateBooksUseCase *usecase.UpdateBookUseCase
 }
 
-func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUseCase, get *usecase.GetBookUseCase) *BookHandler{
+func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUseCase, get *usecase.GetBookUseCase, update *usecase.UpdateBookUseCase) *BookHandler{
 	return &BookHandler{
 		CreateBookUseCase: create,
 		ListBooksUseCase: list,
 		GetBookUseCase: get,
+		UpdateBooksUseCase: update,
 	}
 }
 
@@ -56,6 +58,7 @@ func (h *BookHandler) Create(w http.ResponseWriter, req *http.Request) {
 	// passo 4: responder o cliente, Resposta HTTP 201 (Created)
 	w.WriteHeader(http.StatusCreated)
 }
+
 
 func (h *BookHandler) List(w http.ResponseWriter, req *http.Request){
 	// 1. Chamar o UseCase (h.ListBooksUseCase.Execute())
@@ -110,4 +113,48 @@ func (h *BookHandler) GetBook(w http.ResponseWriter, req *http.Request) {
 	
 	// Correção: Passando (w) para o Encoder
 	json.NewEncoder(w).Encode(book)
+}
+
+
+func (h *BookHandler) UpdateBook(w http.ResponseWriter, req *http.Request){
+	// 1. Preparar a variável para receber o JSON
+	var inputBookDTO usecase.UpdateBookInputDTO
+
+	// 2. Pegar o ID da URL (Igual ao GetBook)
+	idString := req.URL.Query().Get("id")
+	id, err := strconv.Atoi(idString)
+	if err != nil{
+		log.Error().Msg("ID inválido ou não fornecido")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// 3. Ler o JSON do Corpo (Igual ao CreateBook)
+	decoder := json.NewDecoder(req.Body)
+	err = decoder.Decode(&inputBookDTO)
+	if err != nil{
+		// LOG: Error. O cliente mandou um JSON quebrado
+		log.Error().Msg("Erro ao ler JSON: " + err.Error())
+		// Resposta HTTP 400 (Culpa do cliente)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// 4. Chamar o Gerente (UseCase)
+	// Passamos o ID (quem alterar) e o Input (o que alterar)
+	// Recebemos o Livro Atualizado (output) ou erro
+	output, err := h.UpdateBookUseCase.Execute(id, inputBookDTO)
+	if err != nil {
+	// Se der erro aqui, pode ser que o livro não exista ou erro de banco
+		log.Error().Err(err).Msg("Erro ao atualizar livro")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Sucesso
+	log.Info().Msgf("Livro atualizado com sucesso: %s", output.Titulo)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK) // 200 OK (Não use 201 Created para updates)
+	// Devolvemos o JSON do livro atualizado para o usuário ver
+	json.NewEncoder(w).Encode(output)
 }
