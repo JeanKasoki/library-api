@@ -33,10 +33,12 @@ func main(){
 	createBookUseCase := usecase.NewCreateBookUseCase(bookRepo)
 	// Listamos o UseCase e apresentamos o repository (bookRepo) pra ele
 	listBooksUseCase := usecase.NewListBooksUseCase(bookRepo)
-	//Pegamos o UseCase e apresentamoso o repository (bookRepo) pra ele
+	//Pegamos o UseCase e apresentamos o repository (bookRepo) pra ele
 	getBookUseCase := usecase.NewGetBookUseCase(bookRepo)
+	// Pegamos o UseCase e apresentamos o repository (bookRepo) pra ele
+	updateBookUseCase := usecase.NewUpdateBooksUseCase(bookRepo)
 	// Criamos o Handler e apresentamos o createBookUseCase e o listBooksUseCase pra ele
-	bookHandler := handler.NewBookHandler(createBookUseCase, listBooksUseCase, getBookUseCase)
+	bookHandler := handler.NewBookHandler(createBookUseCase, listBooksUseCase, getBookUseCase, updateBookUseCase)
 
 
 	// --- FIM DA INJEÇÃO ---
@@ -46,6 +48,7 @@ func main(){
 	http.HandleFunc("POST /books", bookHandler.Create)
 	http.HandleFunc("GET /books", bookHandler.List)
 	http.HandleFunc("GET /book", bookHandler.GetBook)
+	http.HandleFunc("PUT /book", bookHandler.UpdateBook)
 
 	log.Info().Msg("Servidor rodando na porta 8080")
 
