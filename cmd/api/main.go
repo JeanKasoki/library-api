@@ -46,8 +46,11 @@ func main(){
 	// Configuração da rota
 	// "Quando alguém chamar POST /books, passa a ligação para o Handler"
 	http.HandleFunc("POST /books", bookHandler.Create)
+	// "Quando alguém chamar GET /books, passa a ligação para o Handler listar todos os livros"
 	http.HandleFunc("GET /books", bookHandler.List)
+	// "Quando alguém chamar GET /book (com ?id=...), passa a ligação para o Handler buscar um livro específico"
 	http.HandleFunc("GET /book", bookHandler.GetBook)
+	// "Quando alguém chamar PUT /book (com ?id=...), passa a ligação para o Handler atualizar os dados do livro"
 	http.HandleFunc("PUT /book", bookHandler.UpdateBook)
 
 	log.Info().Msg("Servidor rodando na porta 8080")
