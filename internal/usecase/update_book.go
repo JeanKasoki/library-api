@@ -9,15 +9,15 @@ type UpdateBookInputDTO struct{
 	AnoPublicacao int `json:"ano_publicacao"`
 }
 
-type UpdateBooksUseCase struct {
+type UpdateBookUseCase struct {
 	Repo *repository.BookRepository
 }
 
-func NewUpdateBooksUseCase(repo *repository.BookRepository) *UpdateBooksUseCase{
-	return &UpdateBooksUseCase{Repo: repo}
+func NewUpdateBooksUseCase(repo *repository.BookRepository) *UpdateBookUseCase{
+	return &UpdateBookUseCase{Repo: repo}
 }
 
-func (uc *UpdateBooksUseCase) Execute(id int, input BookInputDTO) (*BookOutputDTO, error){
+func (uc *UpdateBookUseCase) Execute(id int, input UpdateBookInputDTO) (*BookOutputDTO, error){
 	bookEntity, err := uc.Repo.FindByID(id)
 	if err != nil{
 		return nil, err
