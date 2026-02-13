@@ -13,7 +13,7 @@ type BookHandler struct {
 	CreateBookUseCase *usecase.CreateBookUseCase
 	ListBooksUseCase *usecase.ListBooksUseCase
 	GetBookUseCase *usecase.GetBookUseCase
-	UpdateBooksUseCase *usecase.UpdateBookUseCase
+	UpdateBookUseCase *usecase.UpdateBookUseCase
 }
 
 func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUseCase, get *usecase.GetBookUseCase, update *usecase.UpdateBookUseCase) *BookHandler{
@@ -21,7 +21,7 @@ func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUs
 		CreateBookUseCase: create,
 		ListBooksUseCase: list,
 		GetBookUseCase: get,
-		UpdateBooksUseCase: update,
+		UpdateBookUseCase: update,
 	}
 }
 
