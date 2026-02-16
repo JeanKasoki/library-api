@@ -53,3 +53,12 @@ func (repo *BookRepository) Update(book *entity.Book) (*entity.Book, error){
 	}
 	return book, nil
 }
+
+// Delete remove um livro do banco de dados a partir do seu ID
+func (repo *BookRepository) Delete(id int) error{
+	err := repo.DB.Delete(&entity.Book{}, id).Error
+	if err != nil{
+		return err
+	}
+	return nil
+}
