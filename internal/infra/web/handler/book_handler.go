@@ -14,14 +14,16 @@ type BookHandler struct {
 	ListBooksUseCase *usecase.ListBooksUseCase
 	GetBookUseCase *usecase.GetBookUseCase
 	UpdateBookUseCase *usecase.UpdateBookUseCase
+	DeleteBookUseCase *usecase.DeleteBookUseCase
 }
 
-func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUseCase, get *usecase.GetBookUseCase, update *usecase.UpdateBookUseCase) *BookHandler{
+func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUseCase, get *usecase.GetBookUseCase, update *usecase.UpdateBookUseCase, delete *usecase.DeleteBookUseCase) *BookHandler{
 	return &BookHandler{
 		CreateBookUseCase: create,
 		ListBooksUseCase: list,
 		GetBookUseCase: get,
 		UpdateBookUseCase: update,
+		DeleteBookUseCase: delete,
 	}
 }
 
@@ -157,4 +159,37 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, req *http.Request){
 	w.WriteHeader(http.StatusOK) // 200 OK (Não use 201 Created para updates)
 	// Devolvemos o JSON do livro atualizado para o usuário ver
 	json.NewEncoder(w).Encode(output)
+}
+
+
+// DeleteBook deleta um livro existente baseado no ID passado na URL
+func (h *BookHandler) Delete(w http.ResponseWriter, req *http.Request){
+	// 1. Pegar o ID da URL (ex: /book?id=1)
+	idString := req.URL.Query().Get("id")
+
+	// 2. Tentar converter o ID de Texto (string) para Número (int)
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		// Se der erro (ex: id vazio ou "abc"), retornamos erro 400 (Bad Request)
+		log.Error().Msg("ID inválido ou não fornecido")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// 3. Chamar o Gerente (UseCase) para fazer o trabalho sujo
+	err = h.DeleteBookUseCase.Execute(id)
+	if err != nil {
+		// Aqui assumimos 500, mas idealmente seria 404 (Not Found) se não achar
+		log.Error().Err(err).Msg("Falha ao deletar livro")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Sucesso
+	// Deletar não tem corpo de resposta, então NÃO setamos Content-Type
+	// Apenas avisamos o terminal/log que deu certo
+	log.Info().Msgf("Livro com ID %d deletado com sucesso!", id)
+	// Retornamos o Status 204 (No Content)
+	// Significa: "Ação concluída com sucesso, e não há mais nada a enviar"
+	w.WriteHeader(http.StatusNoContent) 
 }
