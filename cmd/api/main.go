@@ -29,29 +29,35 @@ func main(){
  //  --- CREATE --- 
 	// Criamos o Repository e damos a chave do banco (db) pra ele
 	bookRepo := repository.NewBookRepository(db)
-	// Criamos o UseCase e apresentamos o repository (bookRepo) pra ele
+// Criamos o UseCase de Criação e apresentamos o repository (bookRepo) pra ele
 	createBookUseCase := usecase.NewCreateBookUseCase(bookRepo)
-	// Listamos o UseCase e apresentamos o repository (bookRepo) pra ele
+
+	// Criamos o UseCase de Listagem e apresentamos o repository (bookRepo) pra ele
 	listBooksUseCase := usecase.NewListBooksUseCase(bookRepo)
-	//Pegamos o UseCase e apresentamos o repository (bookRepo) pra ele
+
+	// Criamos o UseCase de Busca e apresentamos o repository (bookRepo) pra ele
 	getBookUseCase := usecase.NewGetBookUseCase(bookRepo)
-	// Pegamos o UseCase e apresentamos o repository (bookRepo) pra ele
+
+	// Criamos o UseCase de Atualização e apresentamos o repository (bookRepo) pra ele
 	updateBookUseCase := usecase.NewUpdateBooksUseCase(bookRepo)
-	// Criamos o Handler e apresentamos o createBookUseCase e o listBooksUseCase pra ele
-	bookHandler := handler.NewBookHandler(createBookUseCase, listBooksUseCase, getBookUseCase, updateBookUseCase)
 
+	// Criamos o UseCase de Exclusão e apresentamos o repository (bookRepo) pra ele
+	deleteBookUseCase := usecase.NewDeleteBookUseCase(bookRepo)
 
-	// --- FIM DA INJEÇÃO ---
+	// Criamos o Handler (o porteiro) e entregamos TODOS os 5 UseCases (as ferramentas) na mão dele
+	bookHandler := handler.NewBookHandler(createBookUseCase, listBooksUseCase, getBookUseCase, updateBookUseCase, deleteBookUseCase)
 
 	// Configuração da rota
 	// "Quando alguém chamar POST /books, passa a ligação para o Handler"
-	http.HandleFunc("POST /books", bookHandler.Create)
+	http.HandleFunc("POST /books", bookHandler.CreateBook)
 	// "Quando alguém chamar GET /books, passa a ligação para o Handler listar todos os livros"
-	http.HandleFunc("GET /books", bookHandler.List)
+	http.HandleFunc("GET /books", bookHandler.ListBooks)
 	// "Quando alguém chamar GET /book (com ?id=...), passa a ligação para o Handler buscar um livro específico"
 	http.HandleFunc("GET /book", bookHandler.GetBook)
 	// "Quando alguém chamar PUT /book (com ?id=...), passa a ligação para o Handler atualizar os dados do livro"
 	http.HandleFunc("PUT /book", bookHandler.UpdateBook)
+// "Quando alguém chamar DELETE /book (com ?id=...), passa a ligação para o Handler apagar o livro do banco"
+	http.HandleFunc("DELETE /book", bookHandler.DeleteBook)
 
 	log.Info().Msg("Servidor rodando na porta 8080")
 
