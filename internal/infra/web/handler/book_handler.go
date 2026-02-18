@@ -27,7 +27,7 @@ func NewBookHandler(create *usecase.CreateBookUseCase, list *usecase.ListBooksUs
 	}
 }
 
-func (h *BookHandler) Create(w http.ResponseWriter, req *http.Request) {
+func (h *BookHandler) CreateBook(w http.ResponseWriter, req *http.Request) {
 	log.Debug().Msg("A requisição chegou no controller")
 	
 	// passo 1: criar DTO do book
@@ -62,7 +62,8 @@ func (h *BookHandler) Create(w http.ResponseWriter, req *http.Request) {
 }
 
 
-func (h *BookHandler) List(w http.ResponseWriter, req *http.Request){
+
+func (h *BookHandler) ListBooks(w http.ResponseWriter, req *http.Request){
 	// 1. Chamar o UseCase (h.ListBooksUseCase.Execute())
 	list, err := h.ListBooksUseCase.Execute()
     if err != nil {
@@ -82,6 +83,8 @@ func (h *BookHandler) List(w http.ResponseWriter, req *http.Request){
 		// NewEncoder conecta com a saída (w). Encode pega o dado (list).
 		json.NewEncoder(w).Encode(list)
 }
+
+
 
 // Novo Método: GET /books/find?id=1
 func (h *BookHandler) GetBook(w http.ResponseWriter, req *http.Request) {
@@ -116,6 +119,7 @@ func (h *BookHandler) GetBook(w http.ResponseWriter, req *http.Request) {
 	// Correção: Passando (w) para o Encoder
 	json.NewEncoder(w).Encode(book)
 }
+
 
 
 func (h *BookHandler) UpdateBook(w http.ResponseWriter, req *http.Request){
@@ -162,8 +166,9 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, req *http.Request){
 }
 
 
+
 // DeleteBook deleta um livro existente baseado no ID passado na URL
-func (h *BookHandler) Delete(w http.ResponseWriter, req *http.Request){
+func (h *BookHandler) DeleteBook(w http.ResponseWriter, req *http.Request){
 	// 1. Pegar o ID da URL (ex: /book?id=1)
 	idString := req.URL.Query().Get("id")
 
