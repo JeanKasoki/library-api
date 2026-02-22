@@ -27,7 +27,7 @@ func (uc *UpdateBookUseCase) Execute(id int, input UpdateBookInputDTO) (*BookOut
 	bookEntity.ISBN = input.ISBN
 	bookEntity.AnoPublicacao = input.AnoPublicacao
 
-	_, err = uc.Repo.Update(&bookEntity)
+	_, err = uc.Repo.Update(bookEntity)
 	if err != nil{
 		return nil, err
 	}

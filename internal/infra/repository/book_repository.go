@@ -32,15 +32,14 @@ func (repo *BookRepository) FindAll() ([]entity.Book, error) {
 }
 
 // FindByID busca um livro específico pelo ID
-func (repo *BookRepository) FindByID(id int) (entity.Book, error){
+func (repo *BookRepository) FindByID(id int) (*entity.Book, error){
 	var book entity.Book
 
 	err := repo.DB.First(&book, id).Error
 	if err != nil{
-		// Não se pode retornar nil para uma struct comum. nil só serve para ponteiros, interfaces ou erros. Por isso retornamos uma struct vazia
-		return entity.Book{}, err
+		return nil, err
 	}
-	return book, nil
+	return &book, nil
 }
 
 // Update atualiza os dados de um livro no banco.
